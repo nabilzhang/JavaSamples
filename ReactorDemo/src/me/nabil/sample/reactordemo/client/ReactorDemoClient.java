@@ -32,7 +32,7 @@ public class ReactorDemoClient implements Runnable {
 	public static void main(String[] args) {
 		try {
 			ReactorDemoClient client = new ReactorDemoClient(
-					InetAddress.getByName("172.17.230.194"), 8090);
+					InetAddress.getLocalHost(), 8090);
 			new Thread(client).start();
 
 		} catch (IOException e) {
@@ -156,8 +156,10 @@ public class ReactorDemoClient implements Runnable {
 		if (outBuffer.remaining() > 0) {
 			return;
 		}
+		String outStr = new String(outBuffer.array());
+		System.out.println(outBuffer.toString() + outStr);
 		// 设置Key的interest set为OP_READ事件
-		key.interestOps(SelectionKey.OP_READ);
+		key.interestOps(SelectionKey.OP_WRITE);
 	}
 
 }

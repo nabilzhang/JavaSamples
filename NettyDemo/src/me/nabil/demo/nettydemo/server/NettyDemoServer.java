@@ -20,19 +20,19 @@ public class NettyDemoServer {
 		ServerBootstrap bootstrap = new ServerBootstrap(factory);
 
 		
-		/**
-		 * ²ÉÓÃÄ¬ÈÏChannelPipeline¹ÜµÀ ÕâÒâÎ¶×ÅÍ¬Ò»¸öHandlerÊµÀı½«±»¶à¸öChannelÍ¨µÀ¹²Ïí
-		 * ÕâÖÖ·½Ê½¶ÔÓÚHandlerÖĞÎŞÓĞ×´Ì¬µÄ³ÉÔ±±äÁ¿ÊÇ¿ÉÒÔµÄ£¬²¢ÇÒ¿ÉÒÔÌá¸ßĞÔÄÜ£¡
-		 */
+		        /**
+         * é‡‡ç”¨é»˜è®¤ChannelPipelineç®¡é“ è¿™æ„å‘³ç€åŒä¸€ä¸ªHandlerå®ä¾‹å°†è¢«å¤šä¸ªChannelé€šé“å…±äº«
+         * è¿™ç§æ–¹å¼å¯¹äºHandlerä¸­æ— æœ‰çŠ¶æ€çš„æˆå‘˜å˜é‡æ˜¯å¯ä»¥çš„ï¼Œå¹¶ä¸”å¯ä»¥æé«˜æ€§èƒ½ï¼
+         */
 //		ChannelPipeline pipeline = bootstrap.getPipeline();
 //		NettyDemoHandler demoHandler = new NettyDemoHandler();
 //		NettyDemoDecoder decoder = new NettyDemoDecoder();
 //		pipeline.addLast("decode", decoder);
 //		pipeline.addLast("handler", demoHandler);
 		
-		/**
-		 * ·ÇÄ¬ÈÏchannelPipeline,ÕâÑùÊµÀı½«²»»á±»¶à¸öchannelÍ¨µÀ¹²Ïí
-		 */
+		        /**
+         * éé»˜è®¤channelPipeline,è¿™æ ·å®ä¾‹å°†ä¸ä¼šè¢«å¤šä¸ªchannelé€šé“å…±äº«
+         */
 		NettyDemoServerPipeline pipelineFactory = new NettyDemoServerPipeline();
 		bootstrap.setPipelineFactory(pipelineFactory);
 		bootstrap.bind(new InetSocketAddress(888));

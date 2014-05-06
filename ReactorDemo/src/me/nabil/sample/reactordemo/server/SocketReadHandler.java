@@ -16,25 +16,25 @@ public class SocketReadHandler implements Runnable {
 
 		SelectionKey selectionKey = socketChannel.register(selector, 0);
 
-		// ½«SelectionKey°ó¶¨Îª±¾Handler ÏÂÒ»²½ÓĞÊÂ¼ş´¥·¢Ê±£¬½«µ÷ÓÃ±¾ÀàµÄrun·½·¨¡£
-		// ²Î¿´dispatch(SelectionKey key)
+        // å°†SelectionKeyç»‘å®šä¸ºæœ¬Handler ä¸‹ä¸€æ­¥æœ‰äº‹ä»¶è§¦å‘æ—¶ï¼Œå°†è°ƒç”¨æœ¬ç±»çš„runæ–¹æ³•ã€‚
+        // å‚çœ‹dispatch(SelectionKey key)
 		selectionKey.attach(this);
 
-		// Í¬Ê±½«SelectionKey±ê¼ÇÎª¿É¶Á£¬ÒÔ±ã¶ÁÈ¡¡£
+        // åŒæ—¶å°†SelectionKeyæ ‡è®°ä¸ºå¯è¯»ï¼Œä»¥ä¾¿è¯»å–ã€‚
 		selectionKey.interestOps(SelectionKey.OP_READ);
 		selector.wakeup();
 	}
 
-	/**
-	 * ´¦Àí¶ÁÈ¡Êı¾İ
-	 */
+	    /**
+     * å¤„ç†è¯»å–æ•°æ®
+     */
 	@Override
 	public void run() {
 		ByteBuffer inputBuffer = ByteBuffer.allocate(1024);
 		inputBuffer.clear();
 		try {
 			socketChannel.read(inputBuffer);
-			// ¼¤»îÏß³Ì³Ø ´¦ÀíÕâĞ©request
+            // æ¿€æ´»çº¿ç¨‹æ±  å¤„ç†è¿™äº›request
 			// requestHandle(new Request(socket,btt));
 			System.out.println(inputBuffer);
 		} catch (IOException e) {

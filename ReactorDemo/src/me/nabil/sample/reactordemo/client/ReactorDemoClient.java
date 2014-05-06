@@ -73,39 +73,39 @@ public class ReactorDemoClient implements Runnable {
 	}
 
 	private void initSelector() throws IOException {
-		// 创建一个selector
+        // 鍒涘缓涓�涓猻elector
 		selector = SelectorProvider.provider().openSelector();
-		// 打开SocketChannel
+        // 鎵撳紑SocketChannel
 		SocketChannel socketChannel = SocketChannel.open();
-		// 设置为非阻塞
+        // 璁剧疆涓洪潪闃诲
 		socketChannel.configureBlocking(false);
-		// 连接指定IP和端口的地址
+        // 杩炴帴鎸囧畾IP鍜岀鍙ｇ殑鍦板潃
 		socketChannel
 				.connect(new InetSocketAddress(this.hostAddress, this.port));
-		// 用selector注册套接字，并返回对应的SelectionKey，同时设置Key的interest set为监听服务端已建立连接的事件
+        // 鐢╯elector娉ㄥ唽濂楁帴瀛楋紝骞惰繑鍥炲搴旂殑SelectionKey锛屽悓鏃惰缃甂ey鐨刬nterest set涓虹洃鍚湇鍔＄宸插缓绔嬭繛鎺ョ殑浜嬩欢
 		socketChannel.register(selector, SelectionKey.OP_CONNECT);
 	}
 
 	private void finishConnection(SelectionKey key) throws IOException {
 		SocketChannel socketChannel = (SocketChannel) key.channel();
 		try {
-			// 判断连接是否建立成功，不成功会抛异常
+            // 鍒ゆ柇杩炴帴鏄惁寤虹珛鎴愬姛锛屼笉鎴愬姛浼氭姏寮傚父
 			socketChannel.finishConnect();
 		} catch (IOException e) {
 			System.out.println(e.getMessage());
 			key.cancel();
 			return;
 		}
-		// 设置Key的interest set为OP_WRITE事件
+        // 璁剧疆Key鐨刬nterest set涓篛P_WRITE浜嬩欢
 		key.interestOps(SelectionKey.OP_WRITE);
 	}
 
-	/**
-	 * 处理read
-	 * 
-	 * @param key
-	 * @throws IOException
-	 */
+	    /**
+     * 澶勭悊read
+     * 
+     * @param key
+     * @throws IOException
+     */
 	private void read(SelectionKey key) throws IOException {
 		SocketChannel socketChannel = (SocketChannel) key.channel();
 		readBuffer.clear();
@@ -123,18 +123,18 @@ public class ReactorDemoClient implements Runnable {
 			key.cancel();
 			return;
 		}
-		// 处理响应
+        // 澶勭悊鍝嶅簲
 		handleResponse(socketChannel, readBuffer.array(), numRead);
 	}
 
-	/**
-	 * 处理响应
-	 * 
-	 * @param socketChannel
-	 * @param data
-	 * @param numRead
-	 * @throws IOException
-	 */
+	    /**
+     * 澶勭悊鍝嶅簲
+     * 
+     * @param socketChannel
+     * @param data
+     * @param numRead
+     * @throws IOException
+     */
 	private void handleResponse(SocketChannel socketChannel, byte[] data,
 			int numRead) throws IOException {
 		byte[] rspData = new byte[numRead];
@@ -144,12 +144,12 @@ public class ReactorDemoClient implements Runnable {
 		socketChannel.keyFor(selector).cancel();
 	}
 
-	/**
-	 * 处理write
-	 * 
-	 * @param key
-	 * @throws IOException
-	 */
+	    /**
+     * 澶勭悊write
+     * 
+     * @param key
+     * @throws IOException
+     */
 	private void write(SelectionKey key) throws IOException {
 		SocketChannel socketChannel = (SocketChannel) key.channel();
 		socketChannel.write(outBuffer);
@@ -158,7 +158,7 @@ public class ReactorDemoClient implements Runnable {
 		}
 		String outStr = new String(outBuffer.array());
 		System.out.println(outBuffer.toString() + outStr);
-		// 设置Key的interest set为OP_READ事件
+        // 璁剧疆Key鐨刬nterest set涓篛P_READ浜嬩欢
 		key.interestOps(SelectionKey.OP_WRITE);
 	}
 

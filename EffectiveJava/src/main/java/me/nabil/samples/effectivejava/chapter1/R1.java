@@ -1,5 +1,6 @@
 package me.nabil.samples.effectivejava.chapter1;
 
+
 /**
  * 
  * <h1>第一条:考虑用静态工厂方法代替构造器</h1>
@@ -18,6 +19,8 @@ public class R1 {
 
         // 不同对象
         System.out.println(new Boolean(true) == new Boolean(true));
+        
+        // System.out.println(EnumSet.noneOf(Enuma.class));
     }
 }
 

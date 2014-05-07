@@ -1,5 +1,8 @@
 package me.nabil.samples.effectivejava.chapter1;
 
+import java.util.EnumSet;
+
+
 /**
  * 
  * <h1>第一条:考虑用静态工厂方法代替构造器</h1>
@@ -18,7 +21,18 @@ public class R1 {
 
         // 不同对象
         System.out.println(new Boolean(true) == new Boolean(true));
+
+        // 静态工厂与构造器不同的第三大优势在于,他们可以返回原返回类型的任何子类型的对象
+        EnumSet<Enuma> set = EnumSet.noneOf(Enuma.class);
+        System.out.println(set);
+
+        set = EnumSet.allOf(Enuma.class);
+        System.out.println(set);
     }
+}
+
+enum Enuma {
+    a, b
 }
 
 class R1Temp {

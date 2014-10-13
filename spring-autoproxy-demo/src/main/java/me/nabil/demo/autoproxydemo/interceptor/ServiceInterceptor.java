@@ -9,7 +9,6 @@ import org.apache.commons.logging.LogFactory;
  * 
  * 
  * @author zhangbi
- * @email zhangbi@baidu.com
  * @date 2014年10月13日下午2:33:40
  */
 public class ServiceInterceptor implements MethodInterceptor {
@@ -33,10 +32,14 @@ public class ServiceInterceptor implements MethodInterceptor {
 
         System.out.println("start " + this + "," + className + "." + methodName
                 + methodInvocation.getThis());
+        long startTimestamp = System.currentTimeMillis();
         try {
             Object result = methodInvocation.proceed();
             System.out.println("end " + this + "," + className + "."
                     + methodName);
+            long endTimestamp = System.currentTimeMillis();
+            System.out.println(className + "." + methodName + "  cost"
+                    + (endTimestamp - startTimestamp));
             return result;
         } catch (Throwable t) {
 

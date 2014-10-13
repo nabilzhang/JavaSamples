@@ -4,7 +4,6 @@ package me.nabil.demo.autoproxydemo.autoproxy;
  *
  *
  * @author zhangbi
- * @email zhangbi@baidu.com
  * @date 2014年10月13日下午3:18:42
  */
 import java.util.ArrayList;

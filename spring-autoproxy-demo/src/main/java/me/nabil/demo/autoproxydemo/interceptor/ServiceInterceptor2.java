@@ -9,7 +9,6 @@ import org.apache.commons.logging.LogFactory;
  * 
  * 
  * @author zhangbi
- * @email zhangbi@baidu.com
  * @date 2014年10月13日下午2:33:40
  */
 public class ServiceInterceptor2 implements MethodInterceptor {

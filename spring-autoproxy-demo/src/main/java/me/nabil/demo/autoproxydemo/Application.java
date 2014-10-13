@@ -6,10 +6,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
- * 
- * 
  * @author zhangbi
- * @email zhangbi@baidu.com
  * @date 2014年10月13日上午11:48:13
  */
 public class Application {

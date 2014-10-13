@@ -6,7 +6,6 @@ import org.springframework.beans.factory.BeanFactory;
  *
  *
  * @author zhangbi
- * @email zhangbi@baidu.com
  * @date 2014年10月13日下午3:19:49
  */
 public interface CustomProxyMatcher {

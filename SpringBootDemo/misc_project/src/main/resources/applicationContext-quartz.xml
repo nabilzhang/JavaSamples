@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
+
+    <bean name="exampleJob" class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+        <property name="jobClass" value="me.nabil.demo.quartz.cluster.ExampleJob"/>
+        <property name="jobDataAsMap">
+            <map>
+                <entry key="timeout" value="5"/>
+            </map>
+        </property>
+        <property name="durability" value="true"/>
+    </bean>
+
+    <bean id="exampleBusinessObject" class="me.nabil.demo.quartz.cluster.ExampleBusinessObject"/>
+
+    <!--下面这种配置方式job无法被持久化-->
+    <!--<bean id="jobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">-->
+    <!--<property name="targetObject" ref="exampleBusinessObject"/>-->
+    <!--<property name="targetMethod" value="doIt"/>-->
+    <!--<property name="concurrent" value="false"/>-->
+    <!--</bean>-->
+
+    <bean id="simpleTrigger"
+          class="org.springframework.scheduling.quartz.SimpleTriggerFactoryBean">
+        <!-- see the example of method invoking job above -->
+        <property name="jobDetail" ref="exampleJob"/>
+        <!-- 10 seconds -->
+        <property name="startDelay" value="1000"/>
+        <!-- repeat every 5 seconds -->
+        <property name="repeatInterval" value="5000"/>
+    </bean>
+
+
+    <bean id="cronTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail" ref="exampleJob"/>
+        <!-- run every morning at 6 AM -->
+        <property name="cronExpression" value="0 0 6 * * ?"/>
+    </bean>
+
+    <!--这个bean的名字会在数据库中作为一个schedName,不能乱改也不要和别的应用重复,这很重要-->
+    <bean id="schedulerFactoryBean" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="configLocation" value="classpath:quartz.properties"/>
+        <property name="triggers">
+            <list>
+                <!--<ref bean="cronTrigger"/>-->
+                <ref bean="simpleTrigger"/>
+            </list>
+        </property>
+    </bean>
+
+</beans>

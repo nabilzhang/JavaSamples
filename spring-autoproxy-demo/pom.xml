@@ -6,7 +6,7 @@
 	<artifactId>spring-autoproxy-demo</artifactId>
 
 	<properties>
-		<spring.version>4.1.1.RELEASE</spring.version>
+		<spring.version>4.2.6.RELEASE</spring.version>
 	</properties>
 
 	<dependencies>

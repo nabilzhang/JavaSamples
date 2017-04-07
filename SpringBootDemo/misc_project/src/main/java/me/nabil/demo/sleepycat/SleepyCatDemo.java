@@ -54,12 +54,14 @@ public class SleepyCatDemo {
         catalog = new StoredClassCatalog(myClassDb);
         TupleBinding keyBinding = TupleBinding.getPrimitiveBinding(String.class);
         SerialBinding valueBinding = new SerialBinding(catalog, List.class);
+
         store = exampleEnv.openDatabase(null, databaseName, dbConfig);
         this.map = new StoredSortedMap(store, keyBinding, valueBinding, true);
 
         this.map.put("a", Lists.newArrayList(new ETLPictureDTO()));
         System.out.println(this.map.get("a"));
-
-        exampleEnv.cleanLog();
+        exampleEnv.sync();
+        exampleEnv.removeDatabase(null, databaseName);
+//        exampleEnv.cleanLog();
     }
 }

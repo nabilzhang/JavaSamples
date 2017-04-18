@@ -1,4 +1,4 @@
-package me.nabil.samples.effectivejava.chapter1;
+package me.nabil.samples.search.chapter1;
 
 import java.util.EnumSet;
 

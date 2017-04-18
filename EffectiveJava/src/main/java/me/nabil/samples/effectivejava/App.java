@@ -1,4 +1,4 @@
-package me.nabil.samples.effectivejava;
+package me.nabil.samples.search;
 
 /**
  * Hello world!

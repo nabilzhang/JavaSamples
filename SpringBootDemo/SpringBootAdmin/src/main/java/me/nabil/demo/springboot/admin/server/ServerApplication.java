@@ -1,4 +1,4 @@
-package me.nabil.demo.springboot.cloud.server;
+package me.nabil.demo.springboot.admin.server;
 
 import de.codecentric.boot.admin.config.EnableAdminServer;
 import org.springframework.boot.SpringApplication;

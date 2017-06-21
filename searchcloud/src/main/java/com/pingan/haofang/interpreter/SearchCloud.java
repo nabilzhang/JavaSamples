@@ -37,6 +37,7 @@ public class SearchCloud extends Interpreter {
     private static final char NEWLINE = '\n';
     private static final char TAB = '\t';
     private static final String TABLE_MAGIC_TAG = "%table ";
+    static final String EMPTY_COLUMN_VALUE = "";
 
     public SearchCloud(Properties property) {
         super(property);
@@ -63,30 +64,36 @@ public class SearchCloud extends Interpreter {
                     .addHeader("appCode", appCode)
                     .addHeader("token", token)
                     .addHeader("traceId", interpreterContext.getParagraphId())
-//                    .addHeader("Content-Typ", "application/json")
-//                    .addHeader("Accept", "application / json")
                     .bodyString(s, ContentType.APPLICATION_JSON).execute().returnContent().asString();
 
 
-            System.out.println(content);
             SearchCloudJson json = gson.fromJson(content, SearchCloudJson.class);
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append(TABLE_MAGIC_TAG);
-            stringBuilder.append(NEWLINE);
-            for (String column : json.getResultColumns()) {
-                stringBuilder.append(column).append(TAB);
+            for (int i = 0; i < json.getResultColumns().size(); i++) {
+                String column = json.getResultColumns().get(i);
+                stringBuilder.append(replaceReservedChars(column));
+                if (i != json.getResult().size() - 1) {
+                    stringBuilder.append(TAB);
+                }
             }
             stringBuilder.append(NEWLINE);
 
-            for (HashMap<String, JsonElement> line : json.getResult()) {
+            for (int i = 0; i < json.getResult().size(); i++) {
+                HashMap<String, JsonElement> line = json
+                        .getResult().get(i);
                 for (String column : json.getResultColumns()) {
-                    stringBuilder.append(line.get(column).getAsString()).append(TAB);
+                    stringBuilder.append(replaceReservedChars(line.get(column).getAsString()));
+                    if (i != json.getResult().size() - 1) {
+                        stringBuilder.append(TAB);
+                    }
                 }
                 stringBuilder.append(NEWLINE);
             }
 
             InterpreterResult interpreterResult = new InterpreterResult(InterpreterResult.Code.SUCCESS);
-            interpreterResult.add(InterpreterResult.Type.TABLE, stringBuilder.toString());
+            interpreterResult.add(stringBuilder.toString());
+            LOGGER.info(stringBuilder.toString());
             return interpreterResult;
 
         } catch (IOException e) {
@@ -95,6 +102,16 @@ public class SearchCloud extends Interpreter {
             return result;
         }
 
+    }
+
+    /**
+     * For %table response replace Tab and Newline characters from the content.
+     */
+    private String replaceReservedChars(String str) {
+        if (str == null) {
+            return EMPTY_COLUMN_VALUE;
+        }
+        return str.replace(TAB, WHITESPACE).replace(NEWLINE, WHITESPACE);
     }
 
     @Override

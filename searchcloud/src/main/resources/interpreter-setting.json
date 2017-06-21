@@ -2,11 +2,26 @@
   {
     "group": "searchcloud",
     "name": "searchcloud",
-    "className": "org.apache.zeppelin.markdown.Markdown",
+    "className": "com.pingan.haofang.interpreter.SearchCloud",
     "properties": {
-      "searchcloud.url":"sc.ci.anhouse.com.cn"
-      "searchcloud.app_code":"test",
-      "searchcloud.token":"test_token"
+      "searchcloud.url": {
+        "envName": null,
+        "propertyName": "searchcloud.url",
+        "defaultValue": "http://sc.ci.anhouse.com.cn/api/v1/sql/select",
+        "description": "search cloud url"
+      },
+      "searchcloud.app_code": {
+        "envName": null,
+        "propertyName": "searchcloud.app_code",
+        "defaultValue": "test",
+        "description": "project app code"
+      },
+      "searchcloud.token": {
+        "envName": null,
+        "propertyName": "searchcloud.token",
+        "defaultValue": "testToken",
+        "description": "search cloud app token"
+      }
     },
     "editor": {
       "language": "markdown",

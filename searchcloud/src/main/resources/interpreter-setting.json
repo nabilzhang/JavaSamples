@@ -1,0 +1,16 @@
+[
+  {
+    "group": "searchcloud",
+    "name": "searchcloud",
+    "className": "org.apache.zeppelin.markdown.Markdown",
+    "properties": {
+      "searchcloud.url":"sc.ci.anhouse.com.cn"
+      "searchcloud.app_code":"test",
+      "searchcloud.token":"test_token"
+    },
+    "editor": {
+      "language": "markdown",
+      "editOnDblClick": true
+    }
+  }
+]

@@ -46,4 +46,15 @@ public class SearchCloudTest {
         Assert.assertEquals(result.code(), InterpreterResult.Code.SUCCESS);
     }
 
+    @Test
+    public void interpretPart() throws Exception {
+        SearchCloud searchCloud = new SearchCloud(getProperties());
+        searchCloud.open();
+        InterpreterResult result = searchCloud.interpret("{\n" +
+                "  \"indexName\": \"danke_comm\",\n" +
+                "  \"sql\": \"select channel_name,id from danke_comm;\"\n" +
+                "}", interpreterContext);
+        Assert.assertEquals(result.code(), InterpreterResult.Code.SUCCESS);
+    }
+
 }

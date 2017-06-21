@@ -70,10 +70,11 @@ public class SearchCloud extends Interpreter {
             SearchCloudJson json = gson.fromJson(content, SearchCloudJson.class);
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append(TABLE_MAGIC_TAG);
-            for (int i = 0; i < json.getResultColumns().size(); i++) {
+            int columns = json.getResultColumns().size();
+            for (int i = 0; i < columns; i++) {
                 String column = json.getResultColumns().get(i);
                 stringBuilder.append(replaceReservedChars(column));
-                if (i != json.getResult().size() - 1) {
+                if (i < columns - 1) {
                     stringBuilder.append(TAB);
                 }
             }
@@ -82,9 +83,10 @@ public class SearchCloud extends Interpreter {
             for (int i = 0; i < json.getResult().size(); i++) {
                 HashMap<String, JsonElement> line = json
                         .getResult().get(i);
-                for (String column : json.getResultColumns()) {
+                for (int j = 0; j < columns; j++) {
+                    String column = json.getResultColumns().get(j);
                     stringBuilder.append(replaceReservedChars(line.get(column).getAsString()));
-                    if (i != json.getResult().size() - 1) {
+                    if (j < columns - 1) {
                         stringBuilder.append(TAB);
                     }
                 }

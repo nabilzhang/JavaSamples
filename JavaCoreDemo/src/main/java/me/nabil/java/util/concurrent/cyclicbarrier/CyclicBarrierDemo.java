@@ -74,6 +74,7 @@ class BillTask extends Thread {
         } catch (BrokenBarrierException e) {
             e.printStackTrace();
         }
+        System.out.println(code + "省需要退出了");
     }
 
 }

@@ -2,6 +2,7 @@ package me.nabil.stream;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class StreamMain {
 
@@ -24,6 +25,17 @@ public class StreamMain {
                     System.out.println(a.getName());
                     return null;
                 });
+
+        System.out.println("-------------------");
+        datas.stream().collect(Collectors.groupingBy
+                (FooData::getGroupName, Collectors.counting()))
+                .forEach((k, v) -> System.out.println(k + "->" + v));
+
+        System.out.println("-------------------");
+        System.out.println(datas.stream().collect(Collectors.averagingLong(FooData::getId)));
+
+        System.out.println("-------------------");
+        datas.forEach(System.out::println);
 
     }
 

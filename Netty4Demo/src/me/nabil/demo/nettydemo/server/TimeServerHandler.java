@@ -1,10 +1,10 @@
 package me.nabil.demo.nettydemo.server;
 
-import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
+import me.nabil.demo.nettydemo.UnixTime;
 
 /**
  * Handles a server-side channel.
@@ -14,18 +14,11 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
  */
 public class TimeServerHandler extends ChannelInboundHandlerAdapter {
     @Override
-    public void channelActive(final ChannelHandlerContext ctx) { // (1)
-        final ByteBuf time = ctx.alloc().buffer(4); // (2)
-        time.writeInt((int) (System.currentTimeMillis() / 1000L + 2208988800L));
-
-        final ChannelFuture f = ctx.writeAndFlush(time); // (3)
-        f.addListener(new ChannelFutureListener() {
-            @Override
-            public void operationComplete(ChannelFuture future) {
-                assert f == future;
-                ctx.close();
-            }
-        }); // (4)
+    public void channelActive(final ChannelHandlerContext ctx) {
+        UnixTime unixTime = new UnixTime();
+        ChannelFuture f = ctx.writeAndFlush(new UnixTime());
+        System.out.println(unixTime);
+        f.addListener(ChannelFutureListener.CLOSE);
     }
 
     @Override

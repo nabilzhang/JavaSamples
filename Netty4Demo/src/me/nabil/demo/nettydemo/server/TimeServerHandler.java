@@ -16,8 +16,8 @@ public class TimeServerHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelActive(final ChannelHandlerContext ctx) {
         UnixTime unixTime = new UnixTime();
-        ChannelFuture f = ctx.writeAndFlush(new UnixTime());
-        System.out.println(unixTime);
+        ChannelFuture f = ctx.writeAndFlush(unixTime);
+        System.out.println("toString:" + unixTime);
         f.addListener(ChannelFutureListener.CLOSE);
     }
 

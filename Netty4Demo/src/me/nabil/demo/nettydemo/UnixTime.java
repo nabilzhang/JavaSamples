@@ -9,7 +9,7 @@ import java.util.Date;
  * @date 2019/1/3
  */
 public class UnixTime {
-    private final long value;
+    private long value;
 
     public UnixTime() {
         this(System.currentTimeMillis() / 1000L + 2208988800L);
@@ -21,6 +21,14 @@ public class UnixTime {
 
     public long value() {
         return value;
+    }
+
+    public long getValue() {
+        return value;
+    }
+
+    public void setValue(long value) {
+        this.value = value;
     }
 
     @Override

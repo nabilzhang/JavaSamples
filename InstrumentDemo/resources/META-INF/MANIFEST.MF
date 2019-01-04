@@ -1,3 +1,4 @@
-Manifest-Version: 1.0
-Premain-Class: me.nabil.demo.instrumentdemo.Main
+Agent-Class: me.nabil.demo.instrumentdemo.Main
 Can-Redefine-Classes: true
+Can-Retransform-Classes: true
+Premain-Class: me.nabil.demo.instrumentdemo.Main

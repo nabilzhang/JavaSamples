@@ -1,4 +1,4 @@
-Agent-Class: me.nabil.demo.instrumentdemo.Main
+Premain-Class: me.nabil.demo.instrumentdemo.Agent
+Agent-Class: me.nabil.demo.instrumentdemo.Agent
 Can-Redefine-Classes: true
 Can-Retransform-Classes: true
-Premain-Class: me.nabil.demo.instrumentdemo.Main

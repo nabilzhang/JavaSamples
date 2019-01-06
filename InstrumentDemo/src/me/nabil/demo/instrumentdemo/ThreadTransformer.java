@@ -4,6 +4,7 @@ import javassist.CannotCompileException;
 import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.CtConstructor;
+import javassist.CtMethod;
 import javassist.NotFoundException;
 
 import java.io.IOException;
@@ -46,21 +47,12 @@ public class ThreadTransformer implements ClassFileTransformer {
             CtClass cc = cp.get(targetClassName);
             CtConstructor[] constructors = cc.getDeclaredConstructors();
             for (CtConstructor c : constructors) {
-//                System.out.println(c.getLongName());
-                StringBuilder endBlock = new StringBuilder();
-                endBlock.append("Thread current = currentThread();");
-                endBlock.append("StringBuilder stack = new StringBuilder();\n");
-                endBlock.append("for(int i = current.getStackTrace().length-1; i>=0; i--) {");
-                endBlock.append("   stack.append(current.getStackTrace()[i] + \" | \");\n");
-                endBlock.append("}\n");
-
-                endBlock.append(
-                        "System.out.println(\"[THREAD-LOG] [\" + this.name + \"] " +
-                                "created by [\" + current.getName() + \"] \"" +
-                                "+ \"stack [\" + stack + \"]\");");
-//                System.out.println("[Agent] Transforming class content:\n" + endBlock);
-                c.insertAfter(endBlock.toString());
+                c.insertAfter(transformBlock("create"));
             }
+
+            CtMethod methodStart = cc.getDeclaredMethod("start");
+            methodStart.insertAfter(transformBlock("start"));
+
             cc.writeFile("D:/data/tmp");
             byteCode = cc.toBytecode();
             cc.detach();
@@ -70,5 +62,22 @@ public class ThreadTransformer implements ClassFileTransformer {
         }
 
         return byteCode;
+    }
+
+    private String transformBlock(String type) {
+        //                System.out.println(c.getLongName());
+        StringBuilder endBlock = new StringBuilder();
+        endBlock.append("Thread current = currentThread();");
+        endBlock.append("StringBuilder stack = new StringBuilder();\n");
+        endBlock.append("for(int i = current.getStackTrace().length-1; i>=0; i--) {");
+        endBlock.append("   stack.append(current.getStackTrace()[i] + \" | \");\n");
+        endBlock.append("}\n");
+
+        endBlock.append(
+                "System.out.println(\"[THREAD-LOG] [\" + this.name + \"] " +
+                        type + " by [\" + current.getName() + \"] \"" +
+                        "+ \"stack [\" + stack + \"]\");");
+//        System.out.println("[Agent] Transforming class content:\n" + endBlock);
+        return endBlock.toString();
     }
 }

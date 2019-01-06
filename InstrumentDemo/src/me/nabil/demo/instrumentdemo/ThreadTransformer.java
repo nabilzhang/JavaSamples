@@ -3,19 +3,17 @@ package me.nabil.demo.instrumentdemo;
 import javassist.CannotCompileException;
 import javassist.ClassPool;
 import javassist.CtClass;
-import javassist.CtMethod;
+import javassist.CtConstructor;
 import javassist.NotFoundException;
 
 import java.io.IOException;
 import java.lang.instrument.ClassFileTransformer;
 import java.security.ProtectionDomain;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
- * TODO:类描述
+ * ThreadTransformer
  *
- * @author yuanshan
+ * @author nabil
  * @date 2019/1/4
  */
 public class ThreadTransformer implements ClassFileTransformer {
@@ -42,41 +40,33 @@ public class ThreadTransformer implements ClassFileTransformer {
             return byteCode;
         }
 
-        System.out.println("[Agent] Transforming class Thread");
+        System.out.println("[Agent] Transforming class " + className);
         try {
             ClassPool cp = ClassPool.getDefault();
             CtClass cc = cp.get(targetClassName);
-            CtMethod m = cc.getDeclaredMethod(
-                    "start");
-            m.addLocalVariable(
-                    "startTime", CtClass.longType);
-            m.insertBefore(
-                    "startTime = System.currentTimeMillis();");
+            CtConstructor[] constructors = cc.getDeclaredConstructors();
+            for (CtConstructor c : constructors) {
+//                System.out.println(c.getLongName());
+                StringBuilder endBlock = new StringBuilder();
+                endBlock.append("Thread current = currentThread();");
+                endBlock.append("StringBuilder stack = new StringBuilder();\n");
+                endBlock.append("for(int i = current.getStackTrace().length-1; i>=0; i--) {");
+                endBlock.append("   stack.append(current.getStackTrace()[i] + \" | \");\n");
+                endBlock.append("}\n");
 
-            StringBuilder endBlock = new StringBuilder();
-
-            m.addLocalVariable("endTime", CtClass.longType);
-            m.addLocalVariable("opTime", CtClass.longType);
-            endBlock.append(
-                    "endTime = System.currentTimeMillis();");
-            endBlock.append(
-                    "opTime = (endTime-startTime)/1000;");
-            endBlock.append(
-                    "System.out.println(\"[Application] Withdrawal operation completed in:" +
-                            "\" + opTime + \" seconds!\");");
-//
-//            endBlock.append(
-//                    "System.out.println(java.util.stream.Stream.of(this.getStackTrace()).map(StackTraceElement::toString).collect(java.util.stream.Collectors.toList()).toString());");
-            endBlock.append(
-                    "System.out.println(this.getStackTrace()[0]);");
-
-//            System.out.println(java.util.stream.Stream.of(this.getStackTrace()).map(StackTraceElement::toString).collect(java.util.stream.Collectors.toList()).toString());
-            m.insertAfter(endBlock.toString());
-
+                endBlock.append(
+                        "System.out.println(\"[THREAD-LOG] [\" + this.name + \"] " +
+                                "created by [\" + current.getName() + \"] \"" +
+                                "+ \"stack [\" + stack + \"]\");");
+//                System.out.println("[Agent] Transforming class content:\n" + endBlock);
+                c.insertAfter(endBlock.toString());
+            }
+            cc.writeFile("D:/data/tmp");
             byteCode = cc.toBytecode();
             cc.detach();
         } catch (NotFoundException | CannotCompileException | IOException e) {
-            System.out.println("Exception" + e.getLocalizedMessage());
+            e.printStackTrace();
+            System.out.println("Exception" + e.getMessage());
         }
 
         return byteCode;

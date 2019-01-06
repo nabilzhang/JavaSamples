@@ -12,8 +12,8 @@ public class Agent {
 
     public static void premain(String agentOps, Instrumentation inst) {
         System.out.println("=========premain方法执行========");
-        System.out.println(agentOps);
         String className = "java.lang.Thread";
+        transformClass(className, inst);
         transformClass(className, inst);
     }
 
@@ -21,7 +21,6 @@ public class Agent {
             String agentArgs, Instrumentation inst) {
 
         System.out.println("=========agentmain方法执行========");
-        System.out.println(agentArgs);
         String className = "java.lang.Thread";
         transformClass(className, inst);
     }

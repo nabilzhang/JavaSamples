@@ -7,6 +7,7 @@ import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -16,7 +17,7 @@ import java.util.concurrent.Executors;
 public class ThreadPoolDemoMain {
 
     public static void main(String[] args) throws IOException {
-        System.out.println("args:" + args);
+        System.out.println("args:" + Arrays.toString(args));
 
         ServerSocket listener = new ServerSocket(8080);
         if (args == null || args.length < 1) {
@@ -111,17 +112,19 @@ public class ThreadPoolDemoMain {
                         new InputStreamReader(socket.getInputStream()));
 
                 StringBuilder sb = new StringBuilder();
-                String request;
 
-                while ((request = in.readLine()) != null) {
-                    System.out.println(request);
+                while (in.ready()) {
+                    sb.append(in.readLine());
+                    System.out.println("ready:" + in.ready());
                 }
 
-//                Thread.sleep(10000L);
+                System.out.println(sb.toString());
                 System.out.println(Thread.currentThread().getName());
 
                 OutputStream out = socket.getOutputStream();
                 out.write(response.getBytes(StandardCharsets.UTF_8));
+                out.flush();
+                in.close();
             } finally {
                 socket.close();
             }

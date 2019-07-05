@@ -28,13 +28,15 @@ public class TimeClient {
             b.option(ChannelOption.SO_KEEPALIVE, true); // (4)
             b.handler(new ChannelInitializer<SocketChannel>() {
                 @Override
-                public void initChannel(SocketChannel ch) throws Exception {
+                public void initChannel(SocketChannel ch) {
                     ch.pipeline().addLast(new TimeDecodeHandler(), new TimeClientHandler());
                 }
             });
 
             // Start the client.
             ChannelFuture f = b.connect(host, port).sync(); // (5)
+
+            Thread.sleep(10000);
 
             // Wait until the connection is closed.
             f.channel().closeFuture().sync();

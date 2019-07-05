@@ -32,9 +32,6 @@ public class TimeDecodeHandler extends ReplayingDecoder<TimeDecodeHandler.Decode
             ChannelHandlerContext ctx, ByteBuf in, List<Object> out) {
         switch (state()) {
             case LEN:
-                if (in.readableBytes() < 4) {
-                    System.out.println("data so short");
-                }
                 contentLength = in.readInt();
                 checkpoint(DecodeState.CONTENT);
                 break;

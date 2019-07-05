@@ -1,6 +1,7 @@
 package me.nabil.demo.nettydemo.server;
 
 import io.netty.bootstrap.ServerBootstrap;
+import io.netty.buffer.ByteBufAllocator;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
@@ -35,6 +36,7 @@ public class TimeServer {
                             ch.pipeline().addLast(new TimeEncoder(), new TimeServerHandler());
                         }
                     })
+                    .option(ChannelOption.ALLOCATOR, ByteBufAllocator.DEFAULT)
                     .option(ChannelOption.SO_BACKLOG, 128)          // (5)
                     .childOption(ChannelOption.SO_KEEPALIVE, true); // (6)
 

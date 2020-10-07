@@ -15,7 +15,7 @@ public class UnicodeDemo {
 
         System.out.println(sub("\uD83D\uDC8B"));
         System.out.println(sub("a\uD83D\uDC8Bdfsfs"));
-        System.out.println(sub("\uD83D\uDC8B\uD83D\uDC8Bbfsf\uD83D\uDC8B"));
+        System.out.println(sub("\uD83D\uDC8B\uD83D\uDC8B\uD83D\uDC8Bbfsf\uD83D\uDC8B"));
 
         System.out.println("\uD83D\uDC8B".codePointCount(0, Math.min("\uD83D\uDC8B".length(), 3)));
         System.out.println("\uD83D\uDC8B".length());

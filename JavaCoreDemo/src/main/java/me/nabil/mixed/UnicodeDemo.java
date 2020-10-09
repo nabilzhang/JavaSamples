@@ -19,6 +19,13 @@ public class UnicodeDemo {
 
         System.out.println("\uD83D\uDC8B".codePointCount(0, Math.min("\uD83D\uDC8B".length(), 3)));
         System.out.println("\uD83D\uDC8B".length());
+
+        System.out.println((int) Character.MAX_HIGH_SURROGATE);
+        System.out.println((int) Character.MIN_HIGH_SURROGATE);
+
+        System.out.println((int) Character.MAX_LOW_SURROGATE);
+        System.out.println((int) Character.MIN_LOW_SURROGATE);
+
     }
 
     private static String sub(String str) {

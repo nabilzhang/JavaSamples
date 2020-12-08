@@ -9,6 +9,7 @@ import org.apache.lucene.analysis.util.ClasspathResourceLoader;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.IntPoint;
+import org.apache.lucene.document.LongPoint;
 import org.apache.lucene.document.LongRange;
 import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.DirectoryReader;
@@ -16,6 +17,7 @@ import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
 import org.apache.lucene.queryparser.classic.ParseException;
+import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
@@ -51,7 +53,7 @@ public class MobileLuceneSearchDemo {
     }
 
     public static void main(String[] args) throws IOException, ParseException {
-        initIndex();
+//        initIndex();
 
         search();
     }
@@ -66,9 +68,15 @@ public class MobileLuceneSearchDemo {
 //                .add(new Term("city_id", "1"))
 //                .add(new Term("province_id", "1"))
 //                .build();
-        MultiFieldQueryParser parser = new MultiFieldQueryParser(new String[]{"mobile", "city_id", "province_id", "timestamp"}, new StandardAnalyzer());
-        Query query = parser.parse(String.format("(mobile:\"99\") && (city_id:1) && (province_id:1) && (timestamp:[0 TO %d])"
-                , 1));
+        MultiFieldQueryParser parser = new MultiFieldQueryParser(new String[]{"mobile", "city_id", "province_id", "timestamp_new"},
+//                new BooleanClause.Occur[]{BooleanClause.Occur.FILTER, BooleanClause.Occur.FILTER, BooleanClause.Occur.FILTER, BooleanClause.Occur.SHOULD},
+                new StandardAnalyzer());
+        parser.setDefaultOperator(QueryParser.Operator.AND);
+        parser.setAutoGenerateMultiTermSynonymsPhraseQuery(true);
+
+        long timestamp = System.currentTimeMillis();
+//        timestamp = 1;
+        Query query = parser.parse("mobile:99 and city_id:1 and province_id:1 and timestamp_new:[0 TO " + timestamp + "]");
         TopDocs docs = isearcher.search(query, 10);
         ScoreDoc[] hits = docs.scoreDocs;
         for (ScoreDoc doc : hits) {
@@ -97,6 +105,7 @@ public class MobileLuceneSearchDemo {
             doc.add(new IntPoint("city_id", mobile.getCityId()));
             doc.add(new IntPoint("province_id", mobile.getProvinceId()));
             doc.add(new LongRange("timestamp", new long[]{0L}, new long[]{mobile.getTimestamp()}));
+            doc.add(new LongPoint("timestamp_new", mobile.getTimestamp()));
             iwriter.addDocument(doc);
         }
         iwriter.close();

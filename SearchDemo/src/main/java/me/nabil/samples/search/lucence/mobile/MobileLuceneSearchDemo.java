@@ -11,14 +11,16 @@ import org.apache.lucene.document.Field;
 import org.apache.lucene.document.IntPoint;
 import org.apache.lucene.document.LongPoint;
 import org.apache.lucene.document.LongRange;
+import org.apache.lucene.document.StoredField;
 import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
-import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
-import org.apache.lucene.queryparser.classic.ParseException;
-import org.apache.lucene.queryparser.classic.QueryParser;
+import org.apache.lucene.index.Term;
+import org.apache.lucene.search.BooleanClause;
+import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.PhraseQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
@@ -42,45 +44,38 @@ import java.util.Map;
  */
 public class MobileLuceneSearchDemo {
 
-    private static Directory directory;
+    private static Directory DIRECTORY;
 
     static {
         try {
-            directory = FSDirectory.open(Paths.get(new URI("file:///tmp/testindex")));
+            DIRECTORY = FSDirectory.open(Paths.get(new URI("file:///tmp/testindex")));
         } catch (IOException | URISyntaxException e) {
             e.printStackTrace();
         }
     }
 
-    public static void main(String[] args) throws IOException, ParseException {
-//        initIndex();
+    public static void main(String[] args) throws IOException {
+        initIndex();
 
         search();
     }
 
-    private static void search() throws IOException, ParseException {
-        DirectoryReader ireader = DirectoryReader.open(directory);
-        IndexSearcher isearcher = new IndexSearcher(ireader);
+    private static void search() throws IOException {
+        DirectoryReader directoryReader = DirectoryReader.open(DIRECTORY);
+        IndexSearcher indexSearcher = new IndexSearcher(directoryReader);
 
-        // 设定具体的搜索词
-//        PhraseQuery query = new PhraseQuery.Builder()
-//                .add(new Term("mobile", "9999"))
-//                .add(new Term("city_id", "1"))
-//                .add(new Term("province_id", "1"))
-//                .build();
-        MultiFieldQueryParser parser = new MultiFieldQueryParser(new String[]{"mobile", "city_id", "province_id", "timestamp_new"},
-//                new BooleanClause.Occur[]{BooleanClause.Occur.FILTER, BooleanClause.Occur.FILTER, BooleanClause.Occur.FILTER, BooleanClause.Occur.SHOULD},
-                new StandardAnalyzer());
-        parser.setDefaultOperator(QueryParser.Operator.AND);
-        parser.setAutoGenerateMultiTermSynonymsPhraseQuery(true);
+        BooleanQuery.Builder builder = new BooleanQuery.Builder()
+                .setDisableCoord(true)
+                .add(new BooleanClause(new PhraseQuery.Builder().add(new Term("mobile", "1")).build(), BooleanClause.Occur.MUST))
+                .add(new BooleanClause(IntPoint.newExactQuery("city_id", 1), BooleanClause.Occur.MUST))
+                .add(new BooleanClause(IntPoint.newExactQuery("province_id", 1), BooleanClause.Occur.MUST))
+                .add(new BooleanClause(LongPoint.newRangeQuery("timestamp", 0, System.currentTimeMillis()), BooleanClause.Occur.MUST));
 
-        long timestamp = System.currentTimeMillis();
-//        timestamp = 1;
-        Query query = parser.parse("mobile:99 and city_id:1 and province_id:1 and timestamp_new:[0 TO " + timestamp + "]");
-        TopDocs docs = isearcher.search(query, 10);
+        Query query = builder.build();
+        TopDocs docs = indexSearcher.search(query, 10);
         ScoreDoc[] hits = docs.scoreDocs;
         for (ScoreDoc doc : hits) {
-            System.out.println(isearcher.doc(doc.doc).getFields());
+            System.out.println(indexSearcher.doc(doc.doc).getFields());
         }
     }
 
@@ -97,18 +92,22 @@ public class MobileLuceneSearchDemo {
 
         // 配置索引
         IndexWriterConfig config = new IndexWriterConfig(analyzer);
-        IndexWriter iwriter = new IndexWriter(directory, config);
+        IndexWriter indexWriter = new IndexWriter(DIRECTORY, config);
         // 这里，写索引
         for (MobileItem mobile : getMobiles()) {
             Document doc = new Document();
             doc.add(new Field("mobile", mobile.getMobile(), TextField.TYPE_STORED));
             doc.add(new IntPoint("city_id", mobile.getCityId()));
+            doc.add(new StoredField("city_id", mobile.getCityId()));
             doc.add(new IntPoint("province_id", mobile.getProvinceId()));
-            doc.add(new LongRange("timestamp", new long[]{0L}, new long[]{mobile.getTimestamp()}));
-            doc.add(new LongPoint("timestamp_new", mobile.getTimestamp()));
-            iwriter.addDocument(doc);
+            doc.add(new StoredField("province_id", mobile.getProvinceId()));
+            doc.add(new LongPoint("timestamp", mobile.getTimestamp()));
+            doc.add(new StoredField("timestamp", mobile.getTimestamp()));
+
+            doc.add(new LongRange("timestamp_range", new long[]{0L}, new long[]{mobile.getTimestamp()}));
+            indexWriter.addDocument(doc);
         }
-        iwriter.close();
+        indexWriter.close();
     }
 
     private static List<MobileItem> getMobiles() {
